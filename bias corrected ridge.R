@@ -69,14 +69,14 @@ n.FP.buhl <- rep(NA, n.sims)
 FWER.buhl <- rep(NA, n.sims)
 RMSE.buhl <- rep(NA, n.sims)
 for(sim in 1:n.sims)  {
-  n.FN.buhl[sim] <- sum(p.values.adj[1:s, sim] > alpha)
-  n.FP.buhl[sim] <- sum(p.values.adj[-(1:s), sim] < alpha)
+  n.FN.buhl[sim] <- sum(p.values.adj[1:s, sim] > alpha) * n.bw.all
+  n.FP.buhl[sim] <- sum(p.values.adj[-(1:s), sim] < alpha) * n.bw.all
   FWER.buhl[sim] <- sum(p.values.adj[-(1:s), sim] < alpha) > 0
   RMSE.buhl <- sqrt(mean((beta.tv[, sim] - beta[, i.bw.all]) ^ 2))
 }
 
-FPR.buhl <- mean(n.FP.buhl) / (p - s)
-FNR.buhl <- mean(n.FN.buhl) / s
+FPR.buhl <- mean(n.FP.buhl) / ((p - s) * n.bw.all)
+FNR.buhl <- mean(n.FN.buhl) / (s * n.bw.all)
 
 sd.FWER.buhl <- sd(FWER.buhl) / sqrt(n.sims)
 sd.FNR.buhl <- sd(n.FN.buhl) / sqrt(n.sims) / s
