@@ -5,6 +5,8 @@ library(MASS)
 
 alpha <- 0.05
 n.sims <- 20
+b <- 2.5
+bw <- 0.1
 n <- 500
 p <- 500
 s <- 3
