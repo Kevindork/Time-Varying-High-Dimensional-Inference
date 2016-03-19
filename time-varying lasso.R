@@ -47,8 +47,8 @@ for(sim in 1:n.sims)  {
   RMSE.lasso <- sqrt(mean((beta.lasso[, i.bw.all, sim] - beta[, i.bw.all]) ^ 2))
 }
 
-FPR.lasso <- mean(n.FP.lasso) / ((p - s) * n.bw.all * n.sims)
-FNR.lasso <- mean(n.FN.lasso) / (s * n.bw.all * n.sims)
+FPR.lasso <- mean(n.FP.lasso) / ((p - s) * n.bw.all)
+FNR.lasso <- mean(n.FN.lasso) / (s * n.bw.all)
 
 sd.FWER.lasso <- sd(FWER.lasso) / sqrt(n.sims)
 sd.FNR.lasso <- sd(n.FN.lasso) / sqrt(n.sims) / (s * n.bw.all * n.sims)

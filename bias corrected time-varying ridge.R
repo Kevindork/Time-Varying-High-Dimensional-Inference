@@ -83,8 +83,8 @@ for(sim in 1:n.sims)  {
   RMSE.tv <- sqrt(mean((beta.tv[, i.bw.all, sim] - beta[, i.bw.all]) ^ 2))
 }
 
-FPR.tv <- mean(n.FP.tv) / ((p - s) * n.bw.all * n.sims)
-FNR.tv <- mean(n.FN.tv) / (s * n.bw.all * n.sims)
+FPR.tv <- mean(n.FP.tv) / ((p - s) * n.bw.all)
+FNR.tv <- mean(n.FN.tv) / (s * n.bw.all)
 
 sd.FWER.tv <- sd(FWER.tv) / sqrt(n.sims)
 sd.FNR.tv <- sd(n.FN.tv) / sqrt(n.sims) / (s * n.bw.all * n.sims)
