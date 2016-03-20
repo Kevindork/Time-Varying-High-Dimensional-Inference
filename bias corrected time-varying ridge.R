@@ -1,5 +1,3 @@
-source("initialize.R")
-
 pb <- progress_bar$new(
   format = " Simulating [:bar] :percent in :elapsed. ETA :eta",
   total = n.sims * n, clear = F, width = 60)
@@ -62,7 +60,7 @@ for(sim in 1:n.sims){
     # Bias correction and inference
     beta.tv[, i, sim] <- beta.ridge[, i, sim] - bias.lasso[, i, sim]
     p.values[, i, sim] <- 2 * (1 - pnorm(abs(abs(beta.tv[, i, sim]) -
-                                            gamma[, i, sim]) / Omega[, i, sim]))
+                                               gamma[, i, sim]) / Omega[, i, sim]))
 
     z <- abs(mvrnorm(n.norm, rep(0, p), Omega.full))
     cutoff <- apply(z, 1, function(x) max(x * Omega[, i, sim]))
@@ -75,22 +73,63 @@ for(sim in 1:n.sims){
 n.FN.tv <- rep(NA, n.sims)
 n.FP.tv <- rep(NA, n.sims)
 FWER.tv <- rep(NA, n.sims)
+
+n.FN.tv.adj <- rep(NA, n.sims)
+n.FP.tv.adj <- rep(NA, n.sims)
+FWER.tv.adj <- rep(NA, n.sims)
+
 RMSE.tv <- rep(NA, n.sims)
 for(sim in 1:n.sims)  {
-  n.FN.tv[sim] <- sum(p.values.adj[1:s, i.bw.all, sim] > alpha)
-  n.FP.tv[sim] <- sum(p.values.adj[-(1:s), i.bw.all, sim] < alpha)
-  FWER.tv[sim] <- mean(colSums(p.values.adj[-(1:s), i.bw.all, sim] < alpha) > 0)
-  RMSE.tv <- sqrt(mean((beta.tv[, i.bw.all, sim] - beta[, i.bw.all]) ^ 2))
+  n.FN.tv[sim] <- sum(p.values[1:s, i.bw.all, sim] > alpha)
+  n.FP.tv[sim] <- sum(p.values[-(1:s), i.bw.all, sim] < alpha)
+  FWER.tv[sim] <- mean(colSums(p.values[-(1:s), i.bw.all, sim] < alpha) > 0)
+
+  n.FN.tv.adj[sim] <- sum(p.values.adj[1:s, i.bw.all, sim] > alpha)
+  n.FP.tv.adj[sim] <- sum(p.values.adj[-(1:s), i.bw.all, sim] < alpha)
+  FWER.tv.adj[sim] <- mean(colSums(p.values.adj[-(1:s), i.bw.all, sim] <
+                                     alpha) > 0)
+
+  RMSE.tv[sim] <- sqrt(mean((beta.tv[, i.bw.all, sim] - beta[, i.bw.all]) ^ 2))
 }
 
 FPR.tv <- mean(n.FP.tv) / ((p - s) * n.bw.all)
 FNR.tv <- mean(n.FN.tv) / (s * n.bw.all)
 
-sd.FWER.tv <- sd(FWER.tv) / sqrt(n.sims)
+FPR.tv.adj <- mean(n.FP.tv.adj) / ((p - s) * n.bw.all)
+FNR.tv.adj <- mean(n.FN.tv.adj) / (s * n.bw.all)
+
 sd.FNR.tv <- sd(n.FN.tv) / sqrt(n.sims) / (s * n.bw.all * n.sims)
 sd.FPR.tv <- sd(n.FP.tv) / sqrt(n.sims) / ((p - s) * n.bw.all * n.sims)
+sd.FWER.tv <- sd(FWER.tv) / sqrt(n.sims)
 
-results.tv <- data.frame(n.FP = mean(n.FP.tv), FPR = FPR.tv, sd.FPR = sd.FPR.tv,
+sd.FNR.tv.adj <- sd(n.FN.tv.adj) / sqrt(n.sims) / (s * n.bw.all * n.sims)
+sd.FPR.tv.adj <- sd(n.FP.tv.adj) / sqrt(n.sims) / ((p - s) * n.bw.all * n.sims)
+sd.FWER.tv.adj <- sd(FWER.tv.adj) / sqrt(n.sims)
+
+sd.RMSE.tv <- sd(RMSE.tv) / sqrt(n.sims)
+
+results.tv <- data.frame(n = n, p = p, s = s, b = b,
+                         n.FP = mean(n.FP.tv), FPR = FPR.tv, sd.FPR = sd.FPR.tv,
                          n.FN = mean(n.FN.tv), FNR = FNR.tv, sd.FNR = sd.FNR.tv,
                          FWER = mean(FWER.tv), sd.FWER = sd.FWER.tv,
-                         RMSE = mean(RMSE.tv))
+                         RMSE = mean(RMSE.tv), sd.RMSE = sd.RMSE.tv,
+                         error = errors.type)
+
+results.tv.adj <- data.frame(n = n, p = p, s = s, b = b,
+                             n.FP = mean(n.FP.tv.adj), FPR = FPR.tv.adj,
+                             sd.FPR = sd.FPR.tv.adj,
+                             n.FN = mean(n.FN.tv.adj), FNR = FNR.tv.adj,
+                             sd.FNR = sd.FNR.tv.adj,
+                             FWER = mean(FWER.tv.adj), sd.FWER = sd.FWER.tv.adj,
+                             RMSE = mean(RMSE.tv), sd.RMSE = sd.RMSE.tv,
+                             error = errors.type)
+
+write.table(results.tv, file = "TV-Ridge.csv", append = T, quote = F, sep = ",",
+            eol = "\n", na = "NA", dec = ".", row.names = F,
+            col.names = F, qmethod = c("escape", "double"),
+            fileEncoding = "")
+
+write.table(results.tv.adj, file = "TV-Ridge, adjusted.csv", append = T, quote = F,
+            sep = ",", eol = "\n", na = "NA", dec = ".", row.names = F,
+            col.names = F, qmethod = c("escape", "double"),
+            fileEncoding = "")

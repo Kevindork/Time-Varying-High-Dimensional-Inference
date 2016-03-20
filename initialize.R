@@ -5,13 +5,14 @@ library(MASS)
 
 alpha <- 0.05
 n.sims <- 20
-b <- 2.5
+#b <- 2.5
 bw <- 0.1
 n <- 500
 p <- 500
 s <- 3
 xi <- 0.05
 n.norm <- 1000
+errors.type <- "Diag"
 
 sigma.errors <- diag(n)
 sigma.x <- diag(p)

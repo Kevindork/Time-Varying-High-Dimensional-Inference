@@ -1,5 +1,8 @@
 source("initialize.R")
 
+# 500, 500, 3, 1 -> Magic L1 = 3.67
+L1.lasso = sqrt(2 * log(p) / n)
+
 pb <- progress_bar$new(
   format = " Simulating [:bar] :percent in :elapsed. ETA :eta",
   total = n.sims * n, clear = F, width = 60)
@@ -44,17 +47,27 @@ for(sim in 1:n.sims)  {
   n.FN.lasso[sim] <- sum(beta.lasso[1:s, i.bw.all, sim] == 0)
   n.FP.lasso[sim] <- sum(beta.lasso[-(1:s), i.bw.all, sim] != 0)
   FWER.lasso[sim] <- mean(colSums(beta.lasso[-(1:s), i.bw.all, sim]) != 0)
-  RMSE.lasso <- sqrt(mean((beta.lasso[, i.bw.all, sim] - beta[, i.bw.all]) ^ 2))
+  RMSE.lasso[sim] <- sqrt(mean((beta.lasso[, i.bw.all, sim] - beta[, i.bw.all]) ^ 2))
 }
 
 FPR.lasso <- mean(n.FP.lasso) / ((p - s) * n.bw.all)
 FNR.lasso <- mean(n.FN.lasso) / (s * n.bw.all)
 
-sd.FWER.lasso <- sd(FWER.lasso) / sqrt(n.sims)
 sd.FNR.lasso <- sd(n.FN.lasso) / sqrt(n.sims) / (s * n.bw.all * n.sims)
 sd.FPR.lasso <- sd(n.FP.lasso) / sqrt(n.sims) / ((p - s) * n.bw.all * n.sims)
+sd.FWER.lasso <- sd(FWER.lasso) / sqrt(n.sims)
+sd.RMSE.lasso <- sd(RMSE.lasso) / sqrt(n.sims)
 
-results.lasso <- data.frame(n.FP = mean(n.FP.lasso), FPR = FPR.lasso, sd.FPR = sd.FPR.lasso,
-                         n.FN = mean(n.FN.lasso), FNR = FNR.lasso, sd.FNR = sd.FNR.lasso,
-                         FWER = mean(FWER.lasso), sd.FWER = sd.FWER.lasso,
-                         RMSE = mean(RMSE.lasso))
+results.lasso <- data.frame(n = n, p = p, s = s, b = b, L1 = L1.lasso,
+                            n.FP = mean(n.FP.lasso), FPR = FPR.lasso,
+                            sd.FPR = sd.FPR.lasso,
+                            n.FN = mean(n.FN.lasso), FNR = FNR.lasso,
+                            sd.FNR = sd.FNR.lasso,
+                            FWER = mean(FWER.lasso), sd.FWER = sd.FWER.lasso,
+                            RMSE = mean(RMSE.lasso), sd.RMSE = sd.RMSE.lasso,
+                            error = errors.type)
+
+write.table(results.lasso, file = "Lasso.csv", append = T, quote = F, sep = ",",
+            eol = "\n", na = "NA", dec = ".", row.names = F,
+            col.names = F, qmethod = c("escape", "double"),
+            fileEncoding = "")
