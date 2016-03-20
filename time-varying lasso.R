@@ -2,9 +2,12 @@
 # 500, 500, 3, 0.50 -> Magic L1 = 3.335
 # 500, 500, 3, 0.75 -> Magic L1 = 3.511
 # 500, 500, 3, 1.00 -> Magic L1 = 3.673
+# 500, 500, 3, 1.25 -> Magic L1 =
 # 500, 500, 3, 1.50 -> Magic L1 = 3.980
+# 500, 500, 3, 2.00 -> Magic L1 = 4.132
+# 500, 500, 3, 2.25 -> Magic L1 = 4.208
 # 500, 500, 3, 2.50 -> Magic L1 = 4.264
-L1.lasso = 3.81 * sqrt(2 * log(p) / n)
+L1.lasso = 3.839 * sqrt(2 * log(p) / n)
 
 pb <- progress_bar$new(
   format = " Simulating [:bar] :percent in :elapsed. ETA :eta",
@@ -70,7 +73,7 @@ results.lasso <- data.frame(n = n, p = p, s = s, b = b, L1 = L1.lasso,
                             RMSE = mean(RMSE.lasso), sd.RMSE = sd.RMSE.lasso,
                             error = errors.type)
 
-write.table(results.lasso, file = "Lasso.csv", append = T, quote = F, sep = ",",
+write.table(results.lasso, file = "Lasso, univ.csv", append = T, quote = F, sep = ",",
             eol = "\n", na = "NA", dec = ".", row.names = F,
             col.names = F, qmethod = c("escape", "double"),
             fileEncoding = "")
