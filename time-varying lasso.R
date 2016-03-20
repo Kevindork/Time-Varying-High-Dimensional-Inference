@@ -1,7 +1,10 @@
-source("initialize.R")
-
-# 500, 500, 3, 1 -> Magic L1 = 3.67
-L1.lasso = sqrt(2 * log(p) / n)
+# 500, 500, 3, 0.25 -> Magic L1 = 3.150
+# 500, 500, 3, 0.50 -> Magic L1 = 3.335
+# 500, 500, 3, 0.75 -> Magic L1 = 3.511
+# 500, 500, 3, 1.00 -> Magic L1 = 3.673
+# 500, 500, 3, 1.50 -> Magic L1 = 3.980
+# 500, 500, 3, 2.50 -> Magic L1 = 4.264
+L1.lasso = 3.81 * sqrt(2 * log(p) / n)
 
 pb <- progress_bar$new(
   format = " Simulating [:bar] :percent in :elapsed. ETA :eta",

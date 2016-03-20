@@ -1,5 +1,3 @@
-source("initialize.R")
-
 pb <- progress_bar$new(
   format = " Simulating [:bar] :percent in :elapsed. ETA :eta",
   total = n.sims, clear = F, width = 60)
