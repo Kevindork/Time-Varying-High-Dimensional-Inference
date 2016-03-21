@@ -5,7 +5,12 @@ pb <- progress_bar$new(
 set.seed(1)
 beta <- create.beta(n, p, s) * b
 x <- mvrnorm(n, rep(0, p), sigma.x)
-errors.array <- mvrnorm(n.sims, rep(0, n), sigma.errors)
+if(errors.type == "t")
+{
+  errors.array <- array(rt(n * n.sims, 3) / sqrt(3), dim = c(n.sims, n))
+} else  {
+  errors.array <- mvrnorm(n.sims, rep(0, n), sigma.errors)
+}
 
 t.all <- seq(0, 1, length.out = n)
 i.bw.all <- which(t.all < (1 - bw) & t.all > bw)

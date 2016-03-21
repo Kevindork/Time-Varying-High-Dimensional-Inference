@@ -2,12 +2,12 @@
 # 500, 500, 3, 0.50 -> Magic L1 = 3.335
 # 500, 500, 3, 0.75 -> Magic L1 = 3.511
 # 500, 500, 3, 1.00 -> Magic L1 = 3.673
-# 500, 500, 3, 1.25 -> Magic L1 =
+# 500, 500, 3, 1.25 -> Magic L1 = 3.839
 # 500, 500, 3, 1.50 -> Magic L1 = 3.980
 # 500, 500, 3, 2.00 -> Magic L1 = 4.132
 # 500, 500, 3, 2.25 -> Magic L1 = 4.208
 # 500, 500, 3, 2.50 -> Magic L1 = 4.264
-L1.lasso = 3.839 * sqrt(2 * log(p) / n)
+L1.lasso = sqrt(2 * log(p) / n)
 
 pb <- progress_bar$new(
   format = " Simulating [:bar] :percent in :elapsed. ETA :eta",
@@ -16,7 +16,12 @@ pb <- progress_bar$new(
 set.seed(1)
 beta <- create.beta(n, p, s) * b
 x <- mvrnorm(n, rep(0, p), sigma.x)
-errors.array <- mvrnorm(n.sims, rep(0, n), sigma.errors)
+if(errors.type == "t")
+{
+  errors.array <- array(rt(n * n.sims, 3) / sqrt(3), dim = c(n.sims, n))
+} else  {
+  errors.array <- mvrnorm(n.sims, rep(0, n), sigma.errors)
+}
 
 t.all <- seq(0, 1, length.out = n)
 i.bw.all <- which(t.all < (1 - bw) & t.all > bw)
@@ -73,7 +78,14 @@ results.lasso <- data.frame(n = n, p = p, s = s, b = b, L1 = L1.lasso,
                             RMSE = mean(RMSE.lasso), sd.RMSE = sd.RMSE.lasso,
                             error = errors.type)
 
-write.table(results.lasso, file = "Lasso, univ.csv", append = T, quote = F, sep = ",",
-            eol = "\n", na = "NA", dec = ".", row.names = F,
-            col.names = F, qmethod = c("escape", "double"),
-            fileEncoding = "")
+if(L1.lasso < 1.1 * sqrt(2 * log(p) / n))  {
+  write.table(results.lasso, file = "Lasso, univ.csv", append = T, quote = F,
+              sep = ",", eol = "\n", na = "NA", dec = ".", row.names = F,
+              col.names = F, qmethod = c("escape", "double"),
+              fileEncoding = "")
+} else  {
+  write.table(results.lasso, file = "Lasso, magic.csv", append = T, quote = F,
+              sep = ",", eol = "\n", na = "NA", dec = ".", row.names = F,
+              col.names = F, qmethod = c("escape", "double"),
+              fileEncoding = "")
+}

@@ -5,16 +5,17 @@ library(MASS)
 
 alpha <- 0.05
 n.sims <- 20
-#b <- 2.5
+b <- 2.5
 bw <- 0.1
-n <- 500
-p <- 500
+n <- 300
+p <- 400
 s <- 3
 xi <- 0.05
 n.norm <- 1000
 errors.type <- "Diag"
 
-sigma.errors <- diag(n)
+# sigma.errors <- diag(n)
+sigma.errors <- toeplitz(0.9 ^ c(0 : (n - 1)))
 sigma.x <- diag(p)
 
 # Time varying bias corrected ridge lambdas dynamic and unspecified here
