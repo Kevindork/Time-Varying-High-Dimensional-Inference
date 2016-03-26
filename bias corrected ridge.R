@@ -123,13 +123,14 @@ results.buhl.adj <- data.frame(n = n, p = p, s = s, b = b,
                                RMSE = mean(RMSE.buhl), sd.RMSE = sd.RMSE.buhl,
                                error = errors.type)
 
+if(print == T)  {
+  write.table(results.buhl, file = "Ridge.csv", append = T, quote = F, sep = ",",
+              eol = "\n", na = "NA", dec = ".", row.names = F,
+              col.names = F, qmethod = c("escape", "double"),
+              fileEncoding = "")
 
-write.table(results.buhl, file = "Ridge.csv", append = T, quote = F, sep = ",",
-            eol = "\n", na = "NA", dec = ".", row.names = F,
-            col.names = F, qmethod = c("escape", "double"),
-            fileEncoding = "")
-
-write.table(results.buhl.adj, file = "Ridge, adjusted.csv", append = T, quote = F,
-            sep = ",", eol = "\n", na = "NA", dec = ".", row.names = F,
-            col.names = F, qmethod = c("escape", "double"),
-            fileEncoding = "")
+  write.table(results.buhl.adj, file = "Ridge, adjusted.csv", append = T, quote = F,
+              sep = ",", eol = "\n", na = "NA", dec = ".", row.names = F,
+              col.names = F, qmethod = c("escape", "double"),
+              fileEncoding = "")
+}

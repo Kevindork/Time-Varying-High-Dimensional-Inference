@@ -65,7 +65,8 @@ for(sim in 1:n.sims){
     # Bias correction and inference
     beta.tv[, i, sim] <- beta.ridge[, i, sim] - bias.lasso[, i, sim]
     p.values[, i, sim] <- 2 * (1 - pnorm(abs(abs(beta.tv[, i, sim]) -
-                                               gamma[, i, sim]) / Omega[, i, sim]))
+                                             gamma[, i, sim]) /
+                                         Omega[, i, sim]))
 
     z <- abs(mvrnorm(n.norm, rep(0, p), Omega.full))
     cutoff <- apply(z, 1, function(x) max(x * Omega[, i, sim]))
@@ -129,12 +130,14 @@ results.tv.adj <- data.frame(n = n, p = p, s = s, b = b,
                              RMSE = mean(RMSE.tv), sd.RMSE = sd.RMSE.tv,
                              error = errors.type)
 
-write.table(results.tv, file = "TV-Ridge.csv", append = T, quote = F, sep = ",",
-            eol = "\n", na = "NA", dec = ".", row.names = F,
-            col.names = F, qmethod = c("escape", "double"),
-            fileEncoding = "")
+if(print == T)  {
+  write.table(results.tv, file = "TV-Ridge.csv", append = T, quote = F, sep = ",",
+              eol = "\n", na = "NA", dec = ".", row.names = F,
+              col.names = F, qmethod = c("escape", "double"),
+              fileEncoding = "")
 
-write.table(results.tv.adj, file = "TV-Ridge, adjusted.csv", append = T, quote = F,
-            sep = ",", eol = "\n", na = "NA", dec = ".", row.names = F,
-            col.names = F, qmethod = c("escape", "double"),
-            fileEncoding = "")
+  write.table(results.tv.adj, file = "TV-Ridge, adjusted.csv", append = T, quote = F,
+              sep = ",", eol = "\n", na = "NA", dec = ".", row.names = F,
+              col.names = F, qmethod = c("escape", "double"),
+              fileEncoding = "")
+}

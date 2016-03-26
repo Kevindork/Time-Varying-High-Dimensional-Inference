@@ -7,7 +7,8 @@
 # 500, 500, 3, 2.00 -> Magic L1 = 4.132
 # 500, 500, 3, 2.25 -> Magic L1 = 4.208
 # 500, 500, 3, 2.50 -> Magic L1 = 4.264
-L1.lasso = sqrt(2 * log(p) / n)
+
+L1.lasso = 1 * sqrt(2 * log(p) / n)
 
 pb <- progress_bar$new(
   format = " Simulating [:bar] :percent in :elapsed. ETA :eta",
@@ -78,14 +79,16 @@ results.lasso <- data.frame(n = n, p = p, s = s, b = b, L1 = L1.lasso,
                             RMSE = mean(RMSE.lasso), sd.RMSE = sd.RMSE.lasso,
                             error = errors.type)
 
-if(L1.lasso < 1.1 * sqrt(2 * log(p) / n))  {
-  write.table(results.lasso, file = "Lasso, univ.csv", append = T, quote = F,
-              sep = ",", eol = "\n", na = "NA", dec = ".", row.names = F,
-              col.names = F, qmethod = c("escape", "double"),
-              fileEncoding = "")
-} else  {
-  write.table(results.lasso, file = "Lasso, magic.csv", append = T, quote = F,
-              sep = ",", eol = "\n", na = "NA", dec = ".", row.names = F,
-              col.names = F, qmethod = c("escape", "double"),
-              fileEncoding = "")
+if(print == T)  {
+  if(L1.lasso < 1.1 * sqrt(2 * log(p) / n))  {
+    write.table(results.lasso, file = "Lasso, univ.csv", append = T, quote = F,
+                sep = ",", eol = "\n", na = "NA", dec = ".", row.names = F,
+                col.names = F, qmethod = c("escape", "double"),
+                fileEncoding = "")
+  } else  {
+    write.table(results.lasso, file = "Lasso, magic.csv", append = T, quote = F,
+                sep = ",", eol = "\n", na = "NA", dec = ".", row.names = F,
+                col.names = F, qmethod = c("escape", "double"),
+                fileEncoding = "")
+  }
 }
