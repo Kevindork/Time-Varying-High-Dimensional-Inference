@@ -94,6 +94,7 @@ for(id.patient in 1:length(patient.list))  {
     format = " Saving Plots [:bar] :percent in :elapsed",
     total = n.bw.all, clear = FALSE, width = 60)
 
+  dir.create(paste("Graphs/Sparse ", patient, sep = ""), showWarnings = F)
   colors <- rep("#00BDC4", 52)
   colors[c(1:4, 6, 8, 14, 16, 40)] <- "#F8766D"
   for(t in 1:n.bw.all)  {
@@ -101,7 +102,7 @@ for(id.patient in 1:length(patient.list))  {
     net = network(adj, directed = T)
     net %v% "color" = colors
     title <- paste("Patient ", patient, " at Frame ", t, sep = "")
-    file <- paste("Graphs/", patient, "/", patient, ",",
+    file <- paste("Graphs/Sparse", patient, "/", patient, ",",
                   str_pad(t, 3, pad = "0"), ".png", sep = "")
 
     CairoPNG(filename = file, width = 600, height = 600,
